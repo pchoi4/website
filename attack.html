@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Canvas Login Interface</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="loginCanvas"></canvas>
+    <script>
+        // Get the canvas element and its context
+        const canvas = document.getElementById("loginCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        // Load the background image
+        const background = new Image();
+        background.src = "Screenshot 2025-03-01 at 2.39.04 AM.png";
+        
+        // Set canvas dimensions to match the window size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        // Define input box properties
+        const inputBoxes = [
+            { x: canvas.width * 0.38, y: canvas.height * 0.32, width: canvas.width * 0.25, height: canvas.height * 0.05, text: "", active: false, placeholder: "Email or mobile phone number" },
+            { x: canvas.width * 0.38, y: canvas.height * 0.40, width: canvas.width * 0.25, height: canvas.height * 0.05, text: "", active: false, placeholder: "Password" }
+        ];
+        
+        // Define button properties
+        const button = {
+            x: canvas.width * 0.38,
+            y: canvas.height * 0.48,
+            width: canvas.width * 0.25,
+            height: canvas.height * 0.06,
+            text: "Sign In"
+        };
+        
+        // Function to draw the UI elements on the canvas
+        function drawInterface() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
+            
+            ctx.font = "20px Arial";
+            ctx.fillStyle = "black";
+            
+            // Draw input boxes
+            inputBoxes.forEach((box) => {
+                ctx.fillStyle = "white";
+                ctx.fillRect(box.x, box.y, box.width, box.height);
+                ctx.strokeStyle = "black";
+                ctx.strokeRect(box.x, box.y, box.width, box.height);
+                
+                ctx.fillStyle = "gray";
+                ctx.fillText(box.text || box.placeholder, box.x + 10, box.y + 30);
+            });
+            
+            // Draw button
+            ctx.fillStyle = "white";
+            ctx.fillRect(button.x, button.y, button.width, button.height);
+            ctx.strokeStyle = "black";
+            ctx.strokeRect(button.x, button.y, button.width, button.height);
+            ctx.fillStyle = "black";
+            ctx.fillText(button.text, button.x + 20, button.y + 35);
+        }
+        
+        // Handle mouse clicks on the canvas
+        canvas.addEventListener("click", function(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            inputBoxes.forEach((box) => { box.active = false; });
+            
+            // Check if an input box is clicked
+            inputBoxes.forEach((box) => {
+                if (x > box.x && x < box.x + box.width &&
+                    y > box.y && y < box.y + box.height) {
+                    box.active = true;
+                }
+            });
+            
+            // Check if button is clicked
+            if (x > button.x && x < button.x + button.width &&
+                y > button.y && y < button.y + button.height) {
+                alert("Email: " + inputBoxes[0].text + "\nPassword: " + inputBoxes[1].text);
+            }
+            
+            drawInterface();
+        });
+        
+        // Handle keyboard input for active input boxes
+        window.addEventListener("keydown", function(event) {
+            inputBoxes.forEach((box) => {
+                if (box.active) {
+                    if (event.key === "Backspace") {
+                        box.text = box.text.slice(0, -1);
+                    } else if (event.key.length === 1) {
+                        box.text += event.key;
+                    }
+                }
+            });
+            drawInterface();
+        });
+        
+        // Load the background image and then draw the interface
+        background.onload = function() {
+            drawInterface();
+        };
+    </script>
+</body>
+</html>
